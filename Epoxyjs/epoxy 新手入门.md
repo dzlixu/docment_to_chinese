@@ -1,4 +1,4 @@
-#1.安装
+# 1.安装
 Epoxy依赖 jQuery 1.7.0或更高版本，Underscore 1.4.3或更高版本, 以及Backbone 0.9.9或更高版本. 下载Epoxy库（压缩版9k,gzip只有2k），把引入它的标签放到所有依赖的后面。
 
 ```javascript
@@ -9,7 +9,7 @@ Epoxy依赖 jQuery 1.7.0或更高版本，Underscore 1.4.3或更高版本, 以�
 ```
 你可以选择用Zepto代替 jQuery，用Lo-Dash 代替 Underscore. 当你要兼容IE6/7时，记住引入json2.Epoxy 是遵循MIT许可的开源代码，你可以在Github Repo 中浏览库的源码。
 
-#2.简单的视图绑定
+# 2.简单的视图绑定
 让我们开始做一个简单的绑定，当他们潜在的模型数据发生变化时，我们就改变这些DOM元素的内容.
 ```javascript
 var bindModel = new Backbone.Model({
@@ -92,7 +92,7 @@ var view = new BindingView({model: bindModel});
 
 # 4
 
-#5 计算的getter和setter
+# 5.计算的getter和setter
 目前我们已经看到了一个用计算属性用做只读属性的 get 方法。现在我们写一个可读写的计算塑性，它即可以得到计算的值，也可以设置一个或多个值到模型中。
 **html**
 ```html
