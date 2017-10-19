@@ -133,10 +133,72 @@ var view = new Backbone.Epoxy.View({
 });
 ```
 这里，我们用带有get和set方法的参数对象定义我们的计算属性。get方法可以得到我们组装的模型值，set方法将改变输入的原始值然后同步到格式化的模型数据中。在上面的例子中，这个displayPrice 计算属性用它的get方法格式化货币字符串，然后再重新格式化输入的数据，用它的set方法在数据保存到模型之前把输入的值转化成一个正确的数字。
+注意setter 方程返回一个属性散列而不是直接在它的模型中直接调用set方法。计算setter返回的属性通过set操作合并到模型中。这允许一个计算的setter定义多个属性的修改。这些属性和其他队列模型的改变是同步的。
+了解更多的计算属性getter和setter，请参考 Model.addComputed 部分的文档。
 
+# 6.计算的视图属性
+当然计算属性能很好的管理数据，当数据需要格式化成特别的显示目的，计算属性就会出错；举个例子：当数据为了呈现需要格式化成html。这个例子对视图很特别，因此应该在视图中计算。
+为了适应视图中的特殊格式化，一个Epoxy 视图可以定义它自己的能在在绑定中获得的一系列的计算属性。让我们来用视图计算属性来格式化一个值用作显示：
+```html
+<div id="app-view-computed">
+  <label>First:</label>
+  <input type="text" data-bind="value:firstName,events:['keyup']">
 
+  <label>Last:</label>
+  <input type="text" data-bind="value:lastName,events:['keyup']">
 
- 
+  <span data-bind="html:nameDisplay"></span>
+</div>
+```
+```javascript
+var ComputedView = Backbone.Epoxy.View.extend({
+  el: "#app-view-computed",
+  computeds: {
+    nameDisplay: function() {
+      return "<b>"+ this.getBinding("lastName") +"</b>, "+ this.getBinding("firstName");
+    }
+  }
+});
 
+var view = new ComputedView({
+  model: new Backbone.Model({firstName: "Mace", lastName: "Windu"})
+});
+```
+在上面的例子中计算的视图特性应该看起来很熟悉，视图计算器和模式和模型计算器类似，他们的不同在于数据的获取。对于视图计算器，我们用视图的getBinding 方法来获取数据。注意：我们在管理计算器依赖时讨论过的条件逻辑的警告依然适合视图计算器。
+了解更多关于管理视图计算器属性和他们的依赖，请参考 **computed view properties**部分的文档
 
+# 7 视图绑定过滤
+Epoxy  视图在强绑定设置和清除绑定定义之间达到平衡。Epoxy和 Knockout.js 运用同样的技术，它不鼓励Knockout's 的行内javascript代码。
+相反，Epoxy 为在绑定中直接格式化数据提供包装器。注意在下面的案例中 not（）和 format() 过滤器是怎么使用的。
+
+```html
+<div id="app-filters">
+  <p>
+  <label>First name*</label>
+  <input type="text" data-bind="value:firstName,events:['keyup']">
+  <span data-bind="toggle:not(firstName)">Please enter a first name.</span>
+  </p>
+  <p>
+  <label>Last name*</label>
+  <input type="text" data-bind="value:lastName,events:['keyup']">
+  <span data-bind="toggle:not(lastName)">Please enter a last name.</span>
+  </p>
+  <p data-bind="text:format('Name: $1 $2',firstName,lastName)"></p>
+  <p class="req">* Required</p>
+</div>
+```
+```javascript
+var view = new Backbone.Epoxy.View({
+el: "#app-filters",
+  model: new Backbone.Model({
+    firstName: "Luke",
+    lastName: "Skywalker"
+  })
+});
+```
+在上面的例子中，为了特殊的呈现包装器用作格式化绑定数据。not（）过滤器 用作否定一个值得真实性，而format（）过滤器用作合并多个值组成一个字符串通过一个熟悉的正则反向引用格式。
+绑定过滤器唯一要注意的是不要嵌套。这个是Epoxy故意限制的，Epoxy的观点，应用逻辑不属于你绑定的声明。假如你需要一个经过多次处理的值，你应该用计算器属性提前处理，或用一个自定义的指令。
+查看全部可用的绑定过滤器，或学习怎么定义自己的过滤器。
+
+# 8.自定义指令
 
