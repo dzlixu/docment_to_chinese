@@ -200,5 +200,73 @@ el: "#app-filters",
 绑定过滤器唯一要注意的是不要嵌套。这个是Epoxy故意限制的，Epoxy的观点，应用逻辑不属于你绑定的声明。假如你需要一个经过多次处理的值，你应该用计算器属性提前处理，或用一个自定义的指令。
 查看全部可用的绑定过滤器，或学习怎么定义自己的过滤器。
 
+
 # 8.自定义指令
+绑定处理程序把数据的值应用到DOM中，Epoxy提供一系类的默认绑定处理器来应对很多基本的视图操作。对于其他内容，鼓励开发者为视图中特别的操作自己写绑定处理器。自定义绑定处理器很容易去定义：
+```html
+<div id="app-custom">
+  <label>Millennium Falcon:</label>
+  <input type="checkbox" value="Millennium Falcon" data-bind="checked:shipsList">
+
+  <label>Death Star:</label>
+  <input type="checkbox" value="Death Star" data-bind="checked:shipsList">
+  <b>Ships:</b>
+  <span data-bind="listing:shipsList"></span>
+</div>
+```
+```javascript
+var model = new Backbone.Model({shipsList: []});
+
+var BindingView = Backbone.Epoxy.View.extend({
+  el: "#app-custom",
+  bindingHandlers: {
+    listing: function( $element, value ) {
+        $element.text( value.join(", ") );
+    }
+  }
+});
+
+var view = new BindingView({model: model});
+```
+在上面的例子中，我们设置一个叫做listing 自定义的绑定处理器来灵巧地打印一个数组的值。这个自定义的处理器将用在视图绑定的声明上，就是看到的  "listing:shipsList"绑定。
+一个绑定处理器仅仅是一个接受两个参数的方法，第一个参数是绑定元素的jQuery对象，第二个元素是绑定到视图中的数据值。在一个自定义绑定处理器中，你仅仅声明一个方法，通过这个方法格式化数据，绑定值到元素中。注意，上面的例子仅仅是一个简单只读绑定。
+在 View.bindingHandlers 文档中你可以了解更多关于 自定义处理器及 怎么配置一个双向的绑定。
+
+# 9.绑定集合及多种资源
+到目前为止，我们讨论了用模型属性绑定视图属性的基本运用实例。现在让我们探索添加额外的数据源，包括 Backbone.Collection实例。
+首先，什么是数据源？一个数据源提供 自己和他属性的绑定内容，绑定内容是视图中的可得到的编译过的所有数据的列表。源数据既可以是 Backbone.Model实例也可以是Backbone.Collection 实例。默认情况，一个 Epoxy 视图 的模型和集合属性会默认配置一个数据源（假如你需要，你也可以添加额外的数据源）。
+ 
+数据源以别名 "$sourceName" 包含在绑定上下文中。因此，视图模型和集合特性在绑定中以 $model and $collection被引用。这些直接的数据源引用用作集合绑定子在例子中。
+```html
+<div id="bind-collection">
+  <ul data-bind="collection:$collection"></ul>
+</div>
+```
+```javascript
+var ListItemView = Backbone.View.extend({
+  tagName: "li",
+  initialize: function() {
+    this.$el.text( this.model.get("label") );
+  }
+});
+
+var ListCollection = Backbone.Collection.extend({
+  model: Backbone.Model
+});
+
+var ListView = Backbone.Epoxy.View.extend({
+  el: "#bind-collection",
+  itemView: ListItemView,
+
+  initialize: function() {
+    this.collection = new ListCollection();
+    this.collection.reset([{label: "Luke Skywalker"}, {label: "Han Solo"}]);
+  }
+});
+
+var view = new ListView();
+```
+在上面的例子中，data-bind="collection:$collection" 绑定一个无序列表的内容到视图的数据源上. 然而用什么渲染集合的个体项？注意，在列表视图类中，子视图属性是怎么定义的。子视图属性为集合定义了一个 子项的渲染。
+关于集合绑定的等多细节，请阅读集合处理器的文档。更多关于运用数据源绑定的例子，看下面的 Epoxy ToDos 例子。
+
 
