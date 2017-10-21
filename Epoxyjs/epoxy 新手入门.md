@@ -1,4 +1,4 @@
-# 1.安装
+﻿# 1.安装
 Epoxy依赖 jQuery 1.7.0或更高版本，Underscore 1.4.3或更高版本, 以及Backbone 0.9.9或更高版本. 下载Epoxy库（压缩版9k,gzip只有2k），把引入它的标签放到所有依赖的后面。
 
 ```javascript
@@ -268,5 +268,18 @@ var view = new ListView();
 ```
 在上面的例子中，data-bind="collection:$collection" 绑定一个无序列表的内容到视图的数据源上. 然而用什么渲染集合的个体项？注意，在列表视图类中，子视图属性是怎么定义的。子视图属性为集合定义了一个 子项的渲染。
 关于集合绑定的等多细节，请阅读集合处理器的文档。更多关于运用数据源绑定的例子，看下面的 Epoxy ToDos 例子。
+
+
+# 10.Epoxy ToDos
+每一个现在的 JavaScript MV* 框架，让我们用 Epoxy 视图绑定和原生的Backbone模型建立一个 小的 ToDos 应用
+
+代码见：`http://epoxyjs.org/tutorials.html#epoxy-todos`
+在应用中有4个组，包括：
+**TodoItemModel ** ：这是一个用作存储每个todo数据的原生的 Backbone模型，在这个例子中，每个todo条目有一个标题和一个完成状态。
+**TodoItemView**: 这个Epoxy 视图用作显示每一个todo条目列表。这个视图由一个checkbox和 和 text input 构成一个DOM片段，让后绑定元素的值到视图模型中。另外，视图添加了一些自定义的绑定处理器来管理视图，readonly 处理器触发 文本输入框的readonly属性，而 save :在元素的值发生变化后绑定调用它来保存到绑定的模型中。
+`TodosCollection` : 这是一个用来管理我们活动的todo列表的原生Backbone collection。它的成员是 `TodoItemModel ` 模型构造出来的。 
+`TodoAppView`：最后，这个Epoxy 视图管理主应用的容器视图。它用原生的Backbone 事件设置应用的原始控制，用作从 todos 集合实例中增加和删除子项。它也应用了一个Epoxy的集合，用它绑定视图的默认集合数据源（以 $collection引用）。也应注意：todo子视图为渲染每个集合向提供 子视图属性。
+
+记住：这个应用没有要求只有使用了数据绑定才能工作。实际上，数据绑定对于常见的应用方案是过火的。当评估你的项目的目标和宗旨时记住。讽刺的是这个库的作者非常保守的推荐这个库，当数据绑定在你需要的时候是一个好的工具，但他不应该是一个你在创建界面时的自然选择；尤其是在使用Backbone时。当一个情景需要数据绑定...你会喜欢它做的一切。
 
 
