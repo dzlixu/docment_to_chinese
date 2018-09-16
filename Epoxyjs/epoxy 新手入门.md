@@ -90,7 +90,7 @@ var view = new BindingView({model: bindModel});
 
 # 3.计算模型属性
 
-# 4
+# 4  haha
 
 # 5.计算的getter和setter
 目前我们已经看到了一个用计算属性用做只读属性的 get 方法。现在我们写一个可读写的计算塑性，它即可以得到计算的值，也可以设置一个或多个值到模型中。
